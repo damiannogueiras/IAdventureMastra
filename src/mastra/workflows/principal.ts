@@ -86,7 +86,7 @@ const reto = createStep({
 
 
 // definimos el workflow
-export const actionWorkflow = createWorkflow({
+const actionWorkflow = createWorkflow({
     id: "action-workflow",
     inputSchema: z.object({
         query: z.string()
@@ -105,6 +105,6 @@ export const actionWorkflow = createWorkflow({
         [async ({ inputData: { actionType } }) => actionType == "description", describe],
         [async ({ inputData: { actionType } }) => actionType == "challenge", reto],
     ])
-
 actionWorkflow.commit()
 
+export {actionWorkflow}

@@ -40,7 +40,7 @@ async function test_Agent() {
 // test chef agent with structured output
 async function main_estruct() {
     const query =
-        "DESCRIBEME LA SALA";
+        "Describeme la sala de chocolate";
     console.log(`Query: ${query}`);
 
     // Define the Zod schema
@@ -63,23 +63,22 @@ async function main_estruct() {
 
 // test workflow
 async function test_Workflow() {
-    const run = await mastra.getWorkflow("actionWorkflow").createRunAsync();
+    const run = await mastra.getWorkflow("actionWorkflow")
+        .createRunAsync();
 
     const res = await run.start({
         inputData: {
-            query: "Quiero ir a la derecha"
+            query: "Describe el amanecer"
         },
     });
 
     // Dump the complete workflow result (includes status, steps and result)
-    console.log(JSON.stringify(res, null, 2));
+    // console.log(JSON.stringify(res, null, 2));
 
     // Get the workflow output value
-    if (res.status === "success") {
-        const question = res.result.askAboutRole?.question ?? res.result.askAboutSpecialty?.question;
 
-        console.log(`Output value: ${question}`);
-    }
+    console.log(`Output value: ${JSON.stringify(res.result, null, 2)}`);
+
 }
 
 // test_Agent()
