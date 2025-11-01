@@ -6,4 +6,5 @@ dist
 .env
 *.db
 *.db-*
-.idea
+/.idea/
+/package-lock.json
