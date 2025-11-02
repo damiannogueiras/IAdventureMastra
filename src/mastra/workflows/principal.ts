@@ -17,6 +17,7 @@
 import {createStep, createWorkflow} from "@mastra/core/workflows";
 import {z} from "zod";
 import {mastra} from "../index";
+import {moveAgent} from "../agents/move-agent";
 
 // Define the Zod schema
 const schema = z.object({
@@ -97,6 +98,35 @@ const reto = createStep({
     },
 });
 
+// paso para el movimiento
+const move = createStep({
+    id: "move",
+    inputSchema: z.object({
+        actionType: z.enum(["description", "challenge", "object", "move"]),
+        query: z.string(),
+    }),
+    outputSchema: z.object({
+        answer: z.string(),
+    }),
+    execute: async ({ inputData }) => {
+        console.log("[DEBUG] Step Move Query: ", inputData.query);
+        const describeAgent = mastra.getAgent("moveAgent");
+        const res = await moveAgent.generate(
+            [{ role: "user", content: inputData.query }],
+            {
+                structuredOutput: {
+                    schema: z.object({
+                        answer: z.string()
+                    }),
+                    jsonPromptInjection: true,
+                },
+            },
+        );
+        return res.object;
+        // return { answer: `Reto valorado para: ${inputData.query}` };
+    },
+});
+
 
 // definimos el workflow
 const actionWorkflow = createWorkflow({
@@ -117,6 +147,7 @@ const actionWorkflow = createWorkflow({
     .branch([
         [async ({ inputData: { actionType } }) => actionType == "description", describe],
         [async ({ inputData: { actionType } }) => actionType == "challenge", reto],
+        [async ({ inputData: { actionType } }) => actionType == "move", move]
     ])
 actionWorkflow.commit()
 

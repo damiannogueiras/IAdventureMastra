@@ -6,27 +6,27 @@ export const GameState = {
     "gameName": "El tesoro escondido",
     "lastInteractionTime": "timestamp",
     "gameState": {
-        "playerId": "identificador_unico_del_jugador_o_sesion",
-        "posicion": "id_de_la_sala_actual",
+        "playerId": "playerTest",
+        "posicion": "exterior cueva",
         "inventario": [
-            "manzana_electrica",
-            "script_acceso_lvl_3"
+            "manzana electrica",
+            "script acceso lvl_3"
         ],
         "eventos": [
-            "gronk_bypass_exitoso",
-            "codigo_activado_puerta"
+            "gronk bypass exitoso",
+            "codigo activado puerta"
         ],
         "sala_actual": {
-            "id": "exterior_cueva_mcc",
+            "id": "exterior cueva",
             "descripcion": "Estás frente a una tosca entrada que recuerda a una cueva...",
-            "alias": ["exterior cueva mcc", "fuera cueva"],
+            "alias": ["exterior cueva", "fuera cueva"],
             "objetos_en_sala": ["manzana electrica"],
             "entorno_en_sala": {
                 "gronk_mcc": {
-                    "id": "gronk_mcc",
-                    "alias": ["gronk", "mcc", "cyclope"],
-                    "descripcion": "GRONK, el colosal MCC, ahora vibra con una luz verde tenue...",
-                    "estado_operacional": "bypass_exitoso",
+                    "id": "Gronk",
+                    "alias": ["gronk", "cyclope"],
+                    "descripcion": "GRONK, ahora vibra con una luz verde tenue...",
+                    "estado_operacional": "bypass exitoso",
                     "interacciones": [  ]
                 }
             },
@@ -36,10 +36,10 @@ export const GameState = {
             },
             "retos_asociados": [
                 {
-                    "id": "bypass_gronk_abierto",
+                    "id": "bypass gronk abierto",
                     "gatillo": ["pasar", "ir norte"],
-                    "condiciones": {"requiere_evento": "gronk_bypass_exitoso"},
-                    "efectos": {"desbloquea_salida": "norte"}
+                    "condiciones": {"requiere evento": "gronk bypass exitoso"},
+                    "efectos": {"desbloquea salida": "norte"}
                 }
             ]
         }
