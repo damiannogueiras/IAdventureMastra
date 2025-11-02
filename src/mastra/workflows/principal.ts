@@ -107,6 +107,8 @@ const move = createStep({
     }),
     outputSchema: z.object({
         answer: z.string(),
+        isMove: z.boolean(),
+        nuevoLugar: z.string().optional(),
     }),
     execute: async ({ inputData }) => {
         console.log("[DEBUG] Step Move Query: ", inputData.query);
@@ -116,15 +118,16 @@ const move = createStep({
             {
                 structuredOutput: {
                     schema: z.object({
-                        answer: z.string()
+                        answer: z.string(),
+                        isMove: z.boolean(),
+                        nuevoLugar: z.string().optional(),
                     }),
                     jsonPromptInjection: true,
                 },
             },
         );
-        console.log("[DEBUG] Step Move Response: ", JSON.stringify(res, null, 2));
-        return res.object;
-        // return { answer: `Reto valorado para: ${inputData.query}` };
+        // Devuelve la salida estructurada; soporta `res.result` (nuevo formato) o `res.object` (antiguo)
+        return (res as any).result ?? (res as any).object ?? res;
     },
 });
 

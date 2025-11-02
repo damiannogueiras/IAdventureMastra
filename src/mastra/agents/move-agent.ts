@@ -15,7 +15,11 @@ export const moveAgent = new Agent({
       solo das pistas de porque no puede desplazarse
       Nunca dices los nombres de los retos
       Tu respuesta es de la forma:
-      {"answer": "respuesta del movimiento"}
+      {
+          "answer": "respuesta del movimiento",
+          "isMove": true|false,
+          "nuevoLugar": "nombre del nuevo lugar"
+      }
       Utilizas 300 tokens
   `,
   // model: 'groq/llama-3.3-70b-versatile',

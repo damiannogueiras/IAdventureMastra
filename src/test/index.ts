@@ -77,7 +77,7 @@ async function test_Workflow() {
 
     const res = await run.start({
         inputData: {
-            query: "Describe la mesa"
+            query: "Quiero ir al sur"
         },
     }) // as unknown as MyWorkflowOutput;
 
