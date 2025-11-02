@@ -110,7 +110,7 @@ const move = createStep({
     }),
     execute: async ({ inputData }) => {
         console.log("[DEBUG] Step Move Query: ", inputData.query);
-        const describeAgent = mastra.getAgent("moveAgent");
+        const moveAgent = mastra.getAgent("moveAgent");
         const res = await moveAgent.generate(
             [{ role: "user", content: inputData.query }],
             {
@@ -122,6 +122,7 @@ const move = createStep({
                 },
             },
         );
+        console.log("[DEBUG] Step Move Response: ", JSON.stringify(res, null, 2));
         return res.object;
         // return { answer: `Reto valorado para: ${inputData.query}` };
     },

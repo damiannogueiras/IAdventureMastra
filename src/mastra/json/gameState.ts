@@ -13,7 +13,6 @@ export const GameState = {
             "script acceso lvl_3"
         ],
         "eventos": [
-            "gronk bypass exitoso",
             "codigo activado puerta"
         ],
         "sala_actual": {
@@ -26,8 +25,7 @@ export const GameState = {
                     "id": "Gronk",
                     "alias": ["gronk", "cyclope"],
                     "descripcion": "GRONK, ahora vibra con una luz verde tenue...",
-                    "estado_operacional": "bypass exitoso",
-                    "interacciones": [  ]
+                    "iteracciones": [  ]
                 }
             },
             "salidas": {
