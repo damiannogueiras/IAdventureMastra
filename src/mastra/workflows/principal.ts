@@ -63,7 +63,20 @@ const describe = createStep({
     execute: async ({ inputData }) => {
         // Placeholder logic for the "describe" step
         console.log("[DEBUG] Step Describe Query: ", inputData.query);
-        return { answer: `Descripción generada para: ${inputData.query}` };
+        const describeAgent = mastra.getAgent("describeAgent");
+        const res = await describeAgent.generate(
+            [{ role: "user", content: inputData.query }],
+            {
+                structuredOutput: {
+                    schema: z.object({
+                        answer: z.string()
+                    }),
+                    jsonPromptInjection: true,
+                },
+            },
+        );
+        return res.object;
+        // return { answer: `Descripción generada para: ${inputData.query}` };
     },
 });
 

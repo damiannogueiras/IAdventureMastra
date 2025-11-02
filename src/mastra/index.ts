@@ -5,10 +5,12 @@ import { LibSQLStore } from '@mastra/libsql';
 
 import { filterAgent } from './agents/filter-agent';
 import {actionWorkflow} from "./workflows/principal";
+import {describeAgent} from "./agents/descibe-agent";
 
 export const mastra: Mastra = new Mastra({
   agents: {
-      filterAgent: filterAgent
+      filterAgent,
+      describeAgent,
   },
   workflows: {
       actionWorkflow

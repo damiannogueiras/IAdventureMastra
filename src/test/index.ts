@@ -1,6 +1,6 @@
 import { z } from "zod";
-import {mastra} from "./mastra";
-import {filterAgent} from "./mastra/agents/filter-agent";
+import {mastra} from "../mastra";
+import {filterAgent} from "../mastra/agents/filter-agent";
 
 // Si usas .env, instala dotenv: npm install dotenv
 import 'dotenv/config';
@@ -61,6 +61,15 @@ async function main_estruct() {
     console.log("\n👨‍🍳 Agente Filtro(estruct):", response.object);
 }
 
+
+// definimos el tipo de dato para que no tenga error
+type MyWorkflowOutput = {
+    status: string;
+    steps: any[];
+    result: any;
+    input: any;
+    traceId: string;
+}
 // test workflow
 async function test_Workflow() {
     const run = await mastra.getWorkflow("actionWorkflow")
@@ -68,16 +77,15 @@ async function test_Workflow() {
 
     const res = await run.start({
         inputData: {
-            query: "Describe el amanecer"
+            query: "Describe la mesa"
         },
-    });
+    }) // as unknown as MyWorkflowOutput;
 
     // Dump the complete workflow result (includes status, steps and result)
     // console.log(JSON.stringify(res, null, 2));
 
     // Get the workflow output value
-
-    console.log(`Output value: ${JSON.stringify(res.result, null, 2)}`);
+    console.log(`Output value: ${JSON.stringify(res.steps, null, 2)}`);
 
 }
 
