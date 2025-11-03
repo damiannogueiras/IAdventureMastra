@@ -18,6 +18,7 @@ import {createStep, createWorkflow} from "@mastra/core/workflows";
 import {z} from "zod";
 import {mastra} from "../index";
 import {moveAgent} from "../agents/move-agent";
+import {moveTool} from "../tools/move-tool";
 
 // Define the Zod schema
 const schema = z.object({
@@ -110,7 +111,7 @@ const move = createStep({
         isMove: z.boolean(),
         nuevoLugar: z.string().optional(),
     }),
-    execute: async ({ inputData }) => {
+    execute: async ({ inputData, runtimeContext }) => {
         console.log("[DEBUG] Step Move Query: ", inputData.query);
         const moveAgent = mastra.getAgent("moveAgent");
         const res = await moveAgent.generate(
@@ -126,6 +127,22 @@ const move = createStep({
                 },
             },
         );
+        console.log("[DEBUG] Step Move Response: ", res);
+
+        // si no esta definida la ponemos en blanco
+        const nuevaLocalizacion = res.object.nuevoLugar || "";
+
+        // Si queremos usar la herramienta aqui en vez del Agente
+        // comprueba si se puede mover el jugador
+        if (res.object.isMove) {
+            const resultadoMove = await moveTool.execute({
+                context: {
+                    location: nuevaLocalizacion,
+                },
+                runtimeContext,
+            });
+            console.log("[DEBUG] Step Move Result: ", resultadoMove);
+        }
         // Devuelve la salida estructurada; soporta `res.result` (nuevo formato) o `res.object` (antiguo)
         return (res as any).result ?? (res as any).object ?? res;
     },

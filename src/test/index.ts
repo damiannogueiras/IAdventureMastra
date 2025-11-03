@@ -77,7 +77,7 @@ async function test_Workflow() {
 
     const res = await run.start({
         inputData: {
-            query: "Quiero ir al sur"
+            query: "Quiero ir al norte",
         },
     }) // as unknown as MyWorkflowOutput;
 
@@ -85,7 +85,7 @@ async function test_Workflow() {
     // console.log(JSON.stringify(res, null, 2));
 
     // Get the workflow output value
-    console.log(`Output value: ${JSON.stringify(res.steps, null, 2)}`);
+    // console.log(`Output value: ${JSON.stringify(res.steps, null, 2)}`);
 
 }
 

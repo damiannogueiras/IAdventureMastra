@@ -7,20 +7,16 @@ export const GameState = {
     "lastInteractionTime": "timestamp",
     "gameState": {
         "playerId": "playerTest",
-        "posicion": "exterior cueva",
         "inventario": [
             "manzana electrica",
             "script acceso lvl_3"
         ],
-        "eventos": [
-            "codigo activado puerta"
-        ],
-        "sala_actual": {
+        "localizacion actual": {
             "id": "exterior cueva",
             "descripcion": "Estás frente a una tosca entrada que recuerda a una cueva...",
             "alias": ["exterior cueva", "fuera cueva"],
-            "objetos_en_sala": ["manzana electrica"],
-            "entorno_en_sala": {
+            "objetos localizacion": ["manzana electrica"],
+            "entorno localizacion": {
                 "gronk_mcc": {
                     "id": "Gronk",
                     "alias": ["gronk", "cyclope"],
@@ -29,17 +25,22 @@ export const GameState = {
                 }
             },
             "salidas": {
-                "norte": "cueva magica tecno",
-                "sur": "bosque"
+                "norte": {
+                    "localizacion": "cueva magica tecno",
+                    "reto": "bypass gronk abierto",
+                },
+                "sur": {
+                    "localizacion": "bosque"
+                }
             },
-            "retos_asociados": [
+            "retos": [
                 {
                     "id": "bypass gronk abierto",
-                    "gatillo": ["pasar", "ir norte"],
-                    "condiciones": {"requiere evento": "gronk bypass exitoso"},
-                    "efectos": {"desbloquea salida": "norte"}
+                    "gatillo": ["pasar", "ir norte", "entrar cueva"],
+                    "condiciones": "darle la manzana electrica a gronk",
+                    "isCompleted": false,
                 }
             ]
-        }
+        },
     }
 }
