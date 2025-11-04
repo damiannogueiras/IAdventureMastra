@@ -7,12 +7,14 @@ import { filterAgent } from './agents/filter-agent';
 import {actionWorkflow} from "./workflows/principal";
 import {describeAgent} from "./agents/describe-agent";
 import {moveAgent} from "./agents/move-agent";
+import {retoAgent} from "./agents/reto-agent";
 
 export const mastra: Mastra = new Mastra({
   agents: {
       filterAgent,
       describeAgent,
-      moveAgent
+      moveAgent,
+      retoAgent
   },
   workflows: {
       actionWorkflow

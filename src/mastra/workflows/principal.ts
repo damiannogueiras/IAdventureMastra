@@ -95,7 +95,22 @@ const reto = createStep({
     execute: async ({ inputData }) => {
         // Placeholder logic for the "reto" step
         console.log("[DEBUG] Step Reto Query: ", inputData.query);
-        return { answer: `Reto valorado para: ${inputData.query}` };
+        const retoAgent = mastra.getAgent("retoAgent");
+        const res = await retoAgent.generate(
+            [{ role: "user", content: inputData.query }],
+            {
+                structuredOutput: {
+                    schema: z.object({
+                        answer: z.string(),
+                        id: z.string().optional(),
+                        isCompleted: z.boolean()
+                    }),
+                    jsonPromptInjection: true,
+                },
+            },
+        );
+        // Devuelve la salida estructurada; soporta `res.result` (nuevo formato) o `res.object` (antiguo)
+        return (res as any).result ?? (res as any).object ?? res;
     },
 });
 

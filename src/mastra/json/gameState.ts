@@ -8,7 +8,7 @@ export const GameState = {
     "gameState": {
         "playerId": "playerTest",
         "inventario": [
-            "manzana electrica",
+            //"manzana electrica",
             "script acceso lvl_3"
         ],
         "localizacion actual": {
@@ -27,7 +27,7 @@ export const GameState = {
             "salidas": {
                 "norte": {
                     "localizacion": "cueva magica tecno",
-                    "reto": "bypass gronk abierto",
+                    "reto": "Gronk no deja pasar",
                 },
                 "sur": {
                     "localizacion": "bosque"
@@ -35,9 +35,10 @@ export const GameState = {
             },
             "retos": [
                 {
-                    "id": "bypass gronk abierto",
+                    "id": "Gronk no deja pasar",
                     "gatillo": ["pasar", "ir norte", "entrar cueva"],
-                    "condiciones": "darle la manzana electrica a gronk",
+                    "condiciones": ["darle la manzana electrica a gronk"],
+                    "requiresInventory": ["manzana electrica"],
                     "isCompleted": false,
                 }
             ]
