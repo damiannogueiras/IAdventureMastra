@@ -19,6 +19,76 @@ import {z} from "zod";
 import {mastra} from "../index";
 import {moveAgent} from "../agents/move-agent";
 import {moveTool} from "../tools/move-tool";
+import {Memory} from "@mastra/memory";
+import {LibSQLStore} from "@mastra/libsql";
+
+// GameState en forma de WorkingMemort
+export const gameStateMemory = new Memory({
+    storage: new LibSQLStore({
+        url: "file:gameState.db",
+    }),
+    options: {
+        workingMemory: {
+            enabled: true,
+            scope: 'thread', // Default - memory is isolated per thread
+            template: `
+            # Game State
+            ## jugador: [nombre del jugador]
+            ## inventario
+            - [objeto1]: [descripcion del objeto 1]
+            - [objeto2]: [descripcion del objeto 2]
+            ## localizacion actual: [nombre de la localizacion actual]
+               [descripcion de la localizacion actual]
+            ### objetos localizacion
+            - [objeto localizacion 1]: [descripcion del objeto localizacion 1]
+            - [objeto localizacion 2]: [descripcion del objeto localizacion 2]
+            ### escenario
+            - [objeto escenario 1]: [descripcion del objeto escenario 1]
+            - [objeto escenario 2]: [descripcion del objeto escenario 2]
+            ### salidas
+            - [salida 1]: [localizacion de la salida 1]
+            - [salida 2]: [localizacion de la salida 2]
+                - reto: [nombre del reto para acceder a la salida2]
+            ### retos
+            - [nombre del reto1]
+                - condiciones: [condiciones para completar el reto1]
+                - objetos necesarios: [lista de objetos necesarios para completar el reto1]
+                - esta completado: [true/false seun se logre o no el reto1]
+`,
+        },
+    },
+});
+
+// Create a thread with initial working memory
+const thread = await gameStateMemory.createThread({
+    threadId: "thread-123",
+    resourceId: "user-456",
+    title: "Game State",
+    metadata: {
+        workingMemory: `
+            # Game State
+            ## jugador: viktor
+            ## inventario:
+            - script exploit-2sP: en python
+            ## localizacion actual: exterior cueva
+               El exterior de la cueva es un lugar húmedo y oscuro.
+               Lleno de silvas y rocas cubiertas de musgo, con una atmósfera misteriosa.
+            ### objetos localizacion
+            - manzana: roja y apetitosa
+            ### escenario
+            - Grok: un troll que vigila ferozmente la entrada de la cueva
+            ### salidas
+            - norte: cueva magica
+                -reto: Gronk no deja pasar
+            - sur: bosque encantado
+            ### retos
+            - Gronk no deja pasar
+                - condiciones: darle la manzana a Gronk para que se calme deje pasar
+                - objetos necesarios: manzana
+                - esta completado: false
+`,
+    },
+});
 
 // Define the Zod schema
 const schema = z.object({
@@ -75,6 +145,7 @@ const describe = createStep({
                     }),
                     jsonPromptInjection: true,
                 },
+                threadId: thread.id,
             },
         );
         return res.object;
