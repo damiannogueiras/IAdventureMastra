@@ -19,11 +19,45 @@ import {z} from "zod";
 import {mastra} from "../index";
 import {moveAgent} from "../agents/move-agent";
 import {moveTool} from "../tools/move-tool";
+import {Memory} from "@mastra/memory";
+import {LibSQLStore} from "@mastra/libsql";
+import {gameStateMemory} from "../agents/describe-agent";
 
 // Define the Zod schema
 const schema = z.object({
     actionType: z.enum(["description", "challenge", "object", "move"]),
     query: z.string()
+});
+
+// ondiciones iniciales de la memoria
+const gameStateThread = await gameStateMemory.createThread({
+    threadId: "12134",
+    resourceId: "1234",
+    title: "Game State",
+    metadata: {
+        workingMemory: `
+            # Game State
+            ## jugador: viktor
+            ## inventario:
+            - script exploit-2sP: en python
+            ## localizacion actual: exterior cueva
+               El exterior de la cueva es un lugar húmedo y oscuro.
+               Lleno de silvas y rocas cubiertas de musgo, con una atmósfera misteriosa.
+            ### objetos localizacion
+            - manzana: roja y apetitosa
+            ### escenario
+            - Grok: un troll que vigila ferozmente la entrada de la cueva
+            ### salidas
+            - norte: cueva magica
+                -reto: Gronk no deja pasar
+            - sur: bosque encantado
+            ### retos
+            - Gronk no deja pasar
+                - condiciones: darle la manzana a Gronk para que se calme deje pasar
+                - objetos necesarios: manzana
+                - esta completado: false
+`,
+    },
 });
 
 // definimos el paso para clasificar el candidato
@@ -64,17 +98,21 @@ const describe = createStep({
     }),
     execute: async ({ inputData }) => {
         // Placeholder logic for the "describe" step
-        console.log("[DEBUG] Step Describe Query: ", inputData.query);
+        console.log(`[DEBUG] Step Describe Query: ${inputData.query}`);
         const describeAgent = mastra.getAgent("describeAgent");
         const res = await describeAgent.generate(
             [{ role: "user", content: inputData.query }],
             {
                 structuredOutput: {
-                    schema: z.object({
-                        answer: z.string()
-                    }),
-                    jsonPromptInjection: true,
-                },
+                schema: z.object({
+                    answer: z.string()
+                }),
+                    jsonPromptInjection
+            :
+                true,
+            },
+                threadId: gameStateThread.id,
+                resourceId: "1234",
             },
         );
         return res.object;

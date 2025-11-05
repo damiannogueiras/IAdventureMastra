@@ -4,6 +4,7 @@ import {filterAgent} from "../mastra/agents/filter-agent";
 
 // Si usas .env, instala dotenv: npm install dotenv
 import 'dotenv/config';
+import {describeAgent, gameStateMemory} from "../mastra/agents/describe-agent";
 
 // carga variables desde `agente86/.env`
 
@@ -17,8 +18,8 @@ if (!API_KEY) {
 // continúa con el resto del archivo que usa la API key
 console.log('API key cargada correctamente.');
 
-// test chef agent with streaming response
-async function test_Agent() {
+// test filtro agent
+async function filtro_Agent() {
     const query =
         "Quiero ir a la derecha";
     console.log(`Query stream: ${query}`);
@@ -37,7 +38,54 @@ async function test_Agent() {
     console.log("\n\n✅ Recipe complete!");
 }
 
-// test chef agent with structured output
+// test describe agent
+async function describe_Agent(query: string) {
+    // Create a thread with initial working memory
+    const thread = await gameStateMemory.createThread({
+        threadId: "12134",
+        resourceId: "1234",
+        title: "Game State",
+        metadata: {
+            workingMemory: `
+            # Game State
+            ## jugador: viktor
+            ## inventario:
+            - script exploit-2sP: en python
+            ## localizacion actual: exterior cueva
+               El exterior de la cueva es un lugar húmedo y oscuro.
+               Lleno de silvas y rocas cubiertas de musgo, con una atmósfera misteriosa.
+            ### objetos localizacion
+            - manzana: roja y apetitosa
+            ### escenario
+            - Grok: un troll que vigila ferozmente la entrada de la cueva
+            ### salidas
+            - norte: cueva magica
+                -reto: Gronk no deja pasar
+            - sur: bosque encantado
+            ### retos
+            - Gronk no deja pasar
+                - condiciones: darle la manzana a Gronk para que se calme deje pasar
+                - objetos necesarios: manzana
+                - esta completado: false
+`,
+        },
+    });
+
+
+
+
+    console.log(`Test Describe Query: ${query}`);
+    const response = await describeAgent.generate(query,
+        {
+            threadId: thread.id,
+            resourceId: "1234",
+        },
+    )
+    // salida del LLM
+    console.log(response.text)
+}
+
+
 async function main_estruct() {
     const query =
         "Describeme la sala de chocolate";
@@ -71,24 +119,28 @@ type MyWorkflowOutput = {
     traceId: string;
 }
 // test workflow
-async function test_Workflow() {
+async function test_Workflow(consulta: string) {
     const run = await mastra.getWorkflow("actionWorkflow")
         .createRunAsync();
 
     const res = await run.start({
         inputData: {
-            query: "Quiero ir al norte",
+            query: consulta,
         },
     }) // as unknown as MyWorkflowOutput;
 
     // Dump the complete workflow result (includes status, steps and result)
-    // console.log(JSON.stringify(res, null, 2));
+    console.log(JSON.stringify(res.result, null, 2));
 
     // Get the workflow output value
     // console.log(`Output value: ${JSON.stringify(res.steps, null, 2)}`);
 
 }
 
-// test_Agent()
+// describe_Agent("Describeme la sala")
+// describe_Agent("Como me llamo?")
 // main_estruct();
-test_Workflow()
+// test_Workflow("Describe donde estoy")
+// test_Workflow("Como me llamo?")
+// test_Workflow("Describe las salidas que hay")
+test_Workflow("Que tengo en el inventario?")
