@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npx tsx src/test/index.ts",
+    "test": "npx tsx src/test/test.ts",
     "dev": "mastra dev",
     "build": "mastra build",
     "start": "mastra start"

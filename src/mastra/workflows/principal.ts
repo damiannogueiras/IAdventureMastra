@@ -21,48 +21,18 @@ import {moveAgent} from "../agents/move-agent";
 import {moveTool} from "../tools/move-tool";
 import {Memory} from "@mastra/memory";
 import {LibSQLStore} from "@mastra/libsql";
+import {gameStateMemory} from "../agents/describe-agent";
 
-// GameState en forma de WorkingMemort
-export const gameStateMemory = new Memory({
-    storage: new LibSQLStore({
-        url: "file:gameState.db",
-    }),
-    options: {
-        workingMemory: {
-            enabled: true,
-            scope: 'thread', // Default - memory is isolated per thread
-            template: `
-            # Game State
-            ## jugador: [nombre del jugador]
-            ## inventario
-            - [objeto1]: [descripcion del objeto 1]
-            - [objeto2]: [descripcion del objeto 2]
-            ## localizacion actual: [nombre de la localizacion actual]
-               [descripcion de la localizacion actual]
-            ### objetos localizacion
-            - [objeto localizacion 1]: [descripcion del objeto localizacion 1]
-            - [objeto localizacion 2]: [descripcion del objeto localizacion 2]
-            ### escenario
-            - [objeto escenario 1]: [descripcion del objeto escenario 1]
-            - [objeto escenario 2]: [descripcion del objeto escenario 2]
-            ### salidas
-            - [salida 1]: [localizacion de la salida 1]
-            - [salida 2]: [localizacion de la salida 2]
-                - reto: [nombre del reto para acceder a la salida2]
-            ### retos
-            - [nombre del reto1]
-                - condiciones: [condiciones para completar el reto1]
-                - objetos necesarios: [lista de objetos necesarios para completar el reto1]
-                - esta completado: [true/false seun se logre o no el reto1]
-`,
-        },
-    },
+// Define the Zod schema
+const schema = z.object({
+    actionType: z.enum(["description", "challenge", "object", "move"]),
+    query: z.string()
 });
 
-// Create a thread with initial working memory
-const thread = await gameStateMemory.createThread({
-    threadId: "thread-123",
-    resourceId: "user-456",
+// ondiciones iniciales de la memoria
+const gameStateThread = await gameStateMemory.createThread({
+    threadId: "12134",
+    resourceId: "1234",
     title: "Game State",
     metadata: {
         workingMemory: `
@@ -88,12 +58,6 @@ const thread = await gameStateMemory.createThread({
                 - esta completado: false
 `,
     },
-});
-
-// Define the Zod schema
-const schema = z.object({
-    actionType: z.enum(["description", "challenge", "object", "move"]),
-    query: z.string()
 });
 
 // definimos el paso para clasificar el candidato
@@ -134,18 +98,21 @@ const describe = createStep({
     }),
     execute: async ({ inputData }) => {
         // Placeholder logic for the "describe" step
-        console.log("[DEBUG] Step Describe Query: ", inputData.query);
+        console.log(`[DEBUG] Step Describe Query: ${inputData.query}`);
         const describeAgent = mastra.getAgent("describeAgent");
         const res = await describeAgent.generate(
             [{ role: "user", content: inputData.query }],
             {
                 structuredOutput: {
-                    schema: z.object({
-                        answer: z.string()
-                    }),
-                    jsonPromptInjection: true,
-                },
-                threadId: thread.id,
+                schema: z.object({
+                    answer: z.string()
+                }),
+                    jsonPromptInjection
+            :
+                true,
+            },
+                threadId: gameStateThread.id,
+                resourceId: "1234",
             },
         );
         return res.object;
