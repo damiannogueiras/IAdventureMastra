@@ -1,10 +1,11 @@
 import { z } from "zod";
-import {mastra} from "../mastra";
-import {filterAgent} from "../mastra/agents/filter-agent";
+import {filterAgent} from "../agents/filter-agent";
 
 // Si usas .env, instala dotenv: npm install dotenv
 import 'dotenv/config';
-import {describeAgent, gameStateMemory} from "../mastra/agents/describe-agent";
+import {describeAgent} from "../agents/describe-agent";
+import {gameStateMemory} from "../memory/gameState";
+import {mastra} from "../index";
 
 // carga variables desde `agente86/.env`
 
@@ -130,7 +131,9 @@ async function test_Workflow(consulta: string) {
     }) // as unknown as MyWorkflowOutput;
 
     // Dump the complete workflow result (includes status, steps and result)
-    console.log(JSON.stringify(res.result, null, 2));
+    // Devuelve la salida estructurada; soporta `res.result` (nuevo formato) o `res.object` (antiguo)
+    let _res = (res as any).result ?? (res as any).object ?? res;
+    console.log(JSON.stringify(_res, null, 2));
 
     // Get the workflow output value
     // console.log(`Output value: ${JSON.stringify(res.steps, null, 2)}`);
@@ -143,4 +146,9 @@ async function test_Workflow(consulta: string) {
 // test_Workflow("Describe donde estoy")
 // test_Workflow("Como me llamo?")
 // test_Workflow("Describe las salidas que hay")
-test_Workflow("Que tengo en el inventario?")
+await test_Workflow("coje la manzana")
+//await verMemoria("1234")
+await test_Workflow("Dale la manzana a Grok")
+//await verMemoria("1234")
+await test_Workflow("Que tengo en el inventario?")
+//await verMemoria("1234")

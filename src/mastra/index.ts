@@ -7,17 +7,17 @@ import { filterAgent } from './agents/filter-agent';
 import {actionWorkflow} from "./workflows/principal";
 import {describeAgent} from "./agents/describe-agent";
 import {moveAgent} from "./agents/move-agent";
-import {retoAgent} from "./agents/reto-agent";
+import {accionAgent} from "./agents/accion-agent";
 
 export const mastra: Mastra = new Mastra({
   agents: {
       filterAgent,
       describeAgent,
       moveAgent,
-      retoAgent
+      accionAgent,
   },
   workflows: {
-      actionWorkflow
+      actionWorkflow,
   },
   /*storage: new LibSQLStore({
     // stores observability, scores, ... into memory storage, if it needs to persist, change to file:../mastra.db
