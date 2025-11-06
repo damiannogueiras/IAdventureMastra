@@ -1,14 +1,12 @@
 import { Agent } from '@mastra/core/agent';
-import { GameState } from  '../json/gameState'
-
-const localizacionActual = JSON.stringify(GameState.gameState["localizacion actual"])
+import {gameStateMemory} from "../memory/gameState";
 
 // Agente para el movimiento
 // descartamos que use la tool, porque el agente no puede decidir bien si usarla o no
 export const moveAgent = new Agent({
   name: 'Move Agent',
   instructions: `
-      Eres el encargado de mover al jugador de un juego de rol. Dispones del estado del juego: ${localizacionActual}
+      Eres el encargado de mover al jugador de un juego de rol. Dispones del estado del juego: 
 
       Reglas claras (obligatorias):
       1) Identifica la "salida" solicitada (por ejemplo "norte") buscando coincidencias en "localizacion actual.salidas".
@@ -48,6 +46,8 @@ export const moveAgent = new Agent({
   `,
     model: 'groq/llama-3.3-70b-versatile',
     // model: 'google/gemini-2.5-flash-lite',
+    // habilitamos la memoria
+    memory: gameStateMemory,
 
     // moveTool no se usa en este agente; la importación se eliminó para evitar advertencias.
     // tools: { moveTool }

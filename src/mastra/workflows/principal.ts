@@ -17,21 +17,18 @@
 import {createStep, createWorkflow} from "@mastra/core/workflows";
 import {z} from "zod";
 import {mastra} from "../index";
-import {moveAgent} from "../agents/move-agent";
 import {moveTool} from "../tools/move-tool";
-import {Memory} from "@mastra/memory";
-import {LibSQLStore} from "@mastra/libsql";
-import {gameStateMemory} from "../agents/describe-agent";
+import {gameStateMemory} from "../memory/gameState";
 
 // Define the Zod schema
-const schema = z.object({
-    actionType: z.enum(["description", "challenge", "object", "move"]),
+const out_filter = z.object({
+    actionType: z.enum(["description", "accion", "move"]),
     query: z.string()
 });
 
-// ondiciones iniciales de la memoria
+// condiciones iniciales de la memoria
 const gameStateThread = await gameStateMemory.createThread({
-    threadId: "12134",
+    threadId: "1234",
     resourceId: "1234",
     title: "Game State",
     metadata: {
@@ -60,16 +57,13 @@ const gameStateThread = await gameStateMemory.createThread({
     },
 });
 
-// definimos el paso para clasificar el candidato
+// paso para filtrar la pregunta
 const filtrarPregunta = createStep({
     id: "filtrarPregunta",
     inputSchema: z.object({
         query: z.string(),
     }),
-    outputSchema: z.object({
-        actionType: z.enum(["description", "challenge", "object", "move"]),
-        query: z.string()
-    }),
+    outputSchema: out_filter,
     execute: async ({ inputData }) => {
         const filterAgent = mastra.getAgent("filterAgent");
         console.log("[DEBUG] Step Filtrar Query: ", inputData.query);
@@ -77,7 +71,7 @@ const filtrarPregunta = createStep({
             [{ role: "user", content: inputData.query }],
             {
                 structuredOutput: {
-                    schema,
+                    schema: out_filter,
                     jsonPromptInjection: true,
                 },
             },
@@ -86,13 +80,10 @@ const filtrarPregunta = createStep({
     },
 });
 
-// definimos el paso (llamamos al agente con un prompt en cncreto) para candidato tecnico
+// paso para la descripcion
 const describe = createStep({
     id: "describe",
-    inputSchema: z.object({
-        actionType: z.enum(["description", "challenge", "object", "move"]),
-        query: z.string(),
-    }),
+    inputSchema: out_filter,
     outputSchema: z.object({
         answer: z.string(),
     }),
@@ -115,26 +106,25 @@ const describe = createStep({
                 resourceId: "1234",
             },
         );
+
+        // console.log("[DEBUG] Step Describe: ", gameStateThread.metadata.workinMemory);
         return res.object;
         // return { answer: `Descripción generada para: ${inputData.query}` };
     },
 });
 
-// definimos paso (llamamos al agente con un prompt en concreto) para candidato no tecnico
-const reto = createStep({
-    id: "reto",
-    inputSchema: z.object({
-        actionType: z.enum(["description", "challenge", "object", "move"]),
-        query: z.string(),
-    }),
+// definimos el paso para el reto
+const accion = createStep({
+    id: "accion",
+    inputSchema: out_filter,
     outputSchema: z.object({
         answer: z.string(),
     }),
     execute: async ({ inputData }) => {
         // Placeholder logic for the "reto" step
-        console.log("[DEBUG] Step Reto Query: ", inputData.query);
-        const retoAgent = mastra.getAgent("retoAgent");
-        const res = await retoAgent.generate(
+        console.log("[DEBUG] Step Accion Query: ", inputData.query);
+        const accionAgent = mastra.getAgent("accionAgent");
+        const res = await accionAgent.generate(
             [{ role: "user", content: inputData.query }],
             {
                 structuredOutput: {
@@ -145,6 +135,8 @@ const reto = createStep({
                     }),
                     jsonPromptInjection: true,
                 },
+                threadId: gameStateThread.id,
+                resourceId: "1234",
             },
         );
         // Devuelve la salida estructurada; soporta `res.result` (nuevo formato) o `res.object` (antiguo)
@@ -155,10 +147,7 @@ const reto = createStep({
 // paso para el movimiento
 const move = createStep({
     id: "move",
-    inputSchema: z.object({
-        actionType: z.enum(["description", "challenge", "object", "move"]),
-        query: z.string(),
-    }),
+    inputSchema: out_filter,
     outputSchema: z.object({
         answer: z.string(),
         isMove: z.boolean(),
@@ -220,8 +209,8 @@ const actionWorkflow = createWorkflow({
     .then(filtrarPregunta)
     .branch([
         [async ({ inputData: { actionType } }) => actionType == "description", describe],
-        [async ({ inputData: { actionType } }) => actionType == "challenge", reto],
-        [async ({ inputData: { actionType } }) => actionType == "move", move]
+        [async ({ inputData: { actionType } }) => actionType == "accion", accion],
+        [async ({ inputData: { actionType } }) => actionType == "move", move],
     ])
 actionWorkflow.commit()
 
