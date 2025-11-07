@@ -28,6 +28,14 @@ export const accionAgent = new Agent({
       
       IMPORTANTE: el jugador no puede añadir objetos a "objetos localizacion" o "objetos escenario", no puede añadir "retos" ni modificar las descripciones.
 
+      Devuelves el JSON:
+      
+      {
+        "answer": tu respuesta,
+        "id": el nombre del reto (caso el usuario haya intentado algun reo),
+        "isCompleted": true/false, si paso o no el reto
+      }
+      
       Ejemplos:
 
       OK:
