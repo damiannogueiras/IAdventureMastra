@@ -2,23 +2,39 @@
  * Configuration file for Mastra agents
  * Change values here to test different models and settings
  *
- * Available models:
- * - 'groq/llama-3.3-70b-versatile'
- * - 'groq/mixtral-8x7b-32768'
- * - 'google/gemini-2.5-flash-lite'
- * - 'google/gemini-1.5-pro'
- * - 'openai/gpt-4o'
- * - 'anthropic/claude-3-5-sonnet-20241022'
+ * Available models (utilizar script para comprobar
+ *  • 'groq/mixtral-8x7b-32768'
+ *   • 'groq/mixtral-8x7b'
+ *   • 'groq/llama-3.3-70b-versatile'
+ *   • 'groq/llama-3.3-70b-specdec'
+ *   • 'groq/llama-3.1-70b-versatile'
+ *   • 'groq/llama-3.1-8b-instant'
+ *   • 'groq/llama-3-70b-8192'
+ *   • 'groq/llama-3-8b-8192'
+ *   • 'groq/qwen2-72b-instruct'
+ *   • 'groq/neural-chat-7b-v3-1'
  */
 
 // ============= MODEL ROTATION SYSTEM =============
 // List of models to rotate through on each query
 const AVAILABLE_MODELS = [
-  'google/gemini-2.5-flash',
-  // 'groq/llama-3.1-8b-instant', // no funciona para datos de salida estructurados
-  //'qwen/qwen3-32b',
+    //'groq/meta-llama/llama-4-scout-17b-16e-instruct',
+    'groq/groq/compound-mini', // bien
+    //'groq/qwen/qwen3-32b',
+    //'groq/openai/gpt-oss-120b',
+    //'groq/openai/gpt-oss-20b',
+    //'groq/meta-llama/llama-4-maverick-17b-128e-instruct',
     'groq/llama-3.3-70b-versatile',
-  // 'anthropic/claude-3-5-sonnet-20241022',
+    //'groq/meta-llama/llama-guard-4-12b',
+    'groq/llama-3.1-8b-instant',
+    'groq/openai/gpt-oss-safeguard-20b',
+    'groq/groq/compound',
+    //'groq/meta-llama/llama-prompt-guard-2-22m',
+    'groq/moonshotai/kimi-k2-instruct-0905',
+    'groq/moonshotai/kimi-k2-instruct', // bien
+    'groq/allam-2-7b',
+    //'groq/meta-llama/llama-prompt-guard-2-86m',
+    // Add other providers here...
     // 'google/gemini-2.5-flash-lite'
 ];
 
@@ -30,10 +46,10 @@ let modelRotationIndex = Math.floor(Math.random() * AVAILABLE_MODELS.length);
  * @returns The next model string
  */
 export function getNextModel(): string {
-  const model = AVAILABLE_MODELS[modelRotationIndex];
-  modelRotationIndex = (modelRotationIndex + 1) % AVAILABLE_MODELS.length;
-  console.log(`[MODEL ROTATION] Using model: ${model} (${modelRotationIndex}/${AVAILABLE_MODELS.length})`);
-  return model;
+    const model = AVAILABLE_MODELS[modelRotationIndex];
+    modelRotationIndex = (modelRotationIndex + 1) % AVAILABLE_MODELS.length;
+    console.log(`[MODEL ROTATION] Using model: ${model} (${modelRotationIndex}/${AVAILABLE_MODELS.length})`);
+    return model;
 }
 
 /**
@@ -41,15 +57,15 @@ export function getNextModel(): string {
  * @returns Current model string
  */
 export function getCurrentModel(): string {
-  return AVAILABLE_MODELS[modelRotationIndex];
+    return AVAILABLE_MODELS[modelRotationIndex];
 }
 
 /**
  * Reset rotation to first model
  */
 export function resetModelRotation(): void {
-  modelRotationIndex = 0;
-  console.log(`[MODEL ROTATION] Rotation reset to first model: ${AVAILABLE_MODELS[0]}`);
+    modelRotationIndex = 0;
+    console.log(`[MODEL ROTATION] Rotation reset to first model: ${AVAILABLE_MODELS[0]}`);
 }
 
 /**
@@ -57,48 +73,48 @@ export function resetModelRotation(): void {
  * @returns Array of all available models
  */
 export function getAvailableModels(): string[] {
-  return AVAILABLE_MODELS;
+    return AVAILABLE_MODELS;
 }
 
 export const AGENT_CONFIG = {
-  // ============= CHANGE THIS TO TEST DIFFERENT MODELS =============
-  // Use getNextModel() to rotate, or set a specific model
-  model: getNextModel(),
+    // ============= CHANGE THIS TO TEST DIFFERENT MODELS =============
+    // Use getNextModel() to rotate, or set a specific model
+    model: getNextModel(),
 
-  // Enable model rotation: set to true to automatically rotate on each query
-  enableModelRotation: true,
+    // Enable model rotation: set to true to automatically rotate on each query
+    enableModelRotation: true,
 
-  // Available models for rotation
-  availableModels: AVAILABLE_MODELS,
+    // Available models for rotation
+    availableModels: AVAILABLE_MODELS,
 
-  // Token limits for each agent
-  tokenLimits: {
-    describe: 150,
-    filter: 200,
-    move: 200,
-    action: 300,
-  },
+    // Token limits for each agent
+    tokenLimits: {
+        describe: 150,
+        filter: 200,
+        move: 200,
+        action: 300,
+    },
 
-  // Enable/disable memory for agents
-  memory: {
-    enabled: true,
-    persistThreads: true,
-  },
+    // Enable/disable memory for agents
+    memory: {
+        enabled: true,
+        persistThreads: true,
+    },
 
-  // Debugging options
-  debug: {
-    logRequests: false,
-    logResponses: false,
-    logModelRotation: true,
-  },
+    // Debugging options
+    debug: {
+        logRequests: false,
+        logResponses: false,
+        logModelRotation: true,
+    },
 };
 
 // ======================== DESCRIBE AGENT ========================
 export const DESCRIBE_AGENT_CONFIG = {
-  name: 'Describe Agent',
-  model: AGENT_CONFIG.model,
-  tokenLimit: AGENT_CONFIG.tokenLimits.describe,
-  instructions: `
+    name: 'Describe Agent',
+    model: AGENT_CONFIG.model,
+    tokenLimit: AGENT_CONFIG.tokenLimits.describe,
+    instructions: `
     Eres el Game Master de un juego de rol por texto. Describes la escena a partir de la consulta, eres fantasioso e intrigante.
     Utilizas la WorkingMemory para poder hacer las descripciones que te pida el usuario.
     Solo respondes a consultas de descripciones de entornos, personajes u objetos.
@@ -109,10 +125,10 @@ export const DESCRIBE_AGENT_CONFIG = {
 
 // ======================== FILTER AGENT ========================
 export const FILTER_AGENT_CONFIG = {
-  name: 'Filter Agent',
-  model: AGENT_CONFIG.model,
-  tokenLimit: AGENT_CONFIG.tokenLimits.filter,
-  instructions: `
+    name: 'Filter Agent',
+    model: AGENT_CONFIG.model,
+    tokenLimit: AGENT_CONFIG.tokenLimits.filter,
+    instructions: `
     Eres un agente que determina qué tipo de acción requiere el jugador de un juego de rol para completar una tarea.
     
     Tipos de acciones:
@@ -133,10 +149,10 @@ export const FILTER_AGENT_CONFIG = {
 
 // ======================== MOVE AGENT ========================
 export const MOVE_AGENT_CONFIG = {
-  name: 'Move Agent',
-  model: AGENT_CONFIG.model,
-  tokenLimit: AGENT_CONFIG.tokenLimits.move,
-  instructions: `
+    name: 'Move Agent',
+    model: AGENT_CONFIG.model,
+    tokenLimit: AGENT_CONFIG.tokenLimits.move,
+    instructions: `
     Eres el encargado de mover al jugador de un juego de rol. Dispones del estado del juego.
     
     Reglas claras (obligatorias):
@@ -171,10 +187,10 @@ export const MOVE_AGENT_CONFIG = {
 
 // ======================== ACTION AGENT ========================
 export const ACTION_AGENT_CONFIG = {
-  name: 'Action Agent',
-  model: AGENT_CONFIG.model,
-  tokenLimit: AGENT_CONFIG.tokenLimits.action,
-  instructions: `
+    name: 'Action Agent',
+    model: AGENT_CONFIG.model,
+    tokenLimit: AGENT_CONFIG.tokenLimits.action,
+    instructions: `
     Eres el evaluador de acciones del jugador de un juego de rol, eres ingenioso y divertido en tu "answer" para decirle al jugador que no puede hacer algo y darle pistas, o celebrar que lo logra.
     
     Reglas obligatorias:
