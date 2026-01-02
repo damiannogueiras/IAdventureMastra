@@ -1,86 +1,86 @@
-# [Nombre de la Localización]
+# [Location Name]
 
-## Descripción General
-[Descripción detallada del lugar: atmósfera, clima, características visuales, etc.]
+## General Description
+[Detailed description of the place: atmosphere, climate, visual characteristics, etc.]
 
-## Información de Localización
-- **Nombre**: [Nombre de la localización]
-- **Tipo**: [Tipo: exterior, interior, cueva, pueblo, etc.]
-- **Clima/Atmósfera**: [Descripción del ambiente]
-- **Accesibilidad**: [Fácil, moderada, difícil, etc.]
+## Location Information
+- **Name**: [Location name]
+- **Type**: [Type: outdoor, indoor, cave, town, etc.]
+- **Climate/Atmosphere**: [Description of the environment]
+- **Accessibility**: [Easy, moderate, difficult, etc.]
 
-## Objetos Disponibles
-### En la Localización
-- **[Objeto 1]**: [Descripción detallada del objeto]
-  - Color/Apariencia: [Detalles visuales]
-  - Ubicación específica: [Dónde se encuentra]
-  - Interactuable: [Sí/No]
+## Available Objects
+### At the Location
+- **[Object 1]**: [Detailed description of the object]
+  - Color/Appearance: [Visual details]
+  - Specific Location: [Where it is found]
+  - Interactable: [Yes/No]
   
-- **[Objeto 2]**: [Descripción detallada del objeto]
-  - Color/Apariencia: [Detalles visuales]
-  - Ubicación específica: [Dónde se encuentra]
-  - Interactuable: [Sí/No]
+- **[Object 2]**: [Detailed description of the object]
+  - Color/Appearance: [Visual details]
+  - Specific Location: [Where it is found]
+  - Interactable: [Yes/No]
 
-## Personajes/NPCs
-### [Nombre del Personaje 1]
-- **Rol**: [Qué papel juega en la historia]
-- **Descripción**: [Apariencia y características]
-- **Comportamiento**: [Cómo actúa, su actitud]
-- **Diálogos**: [Qué dice o puede decir]
-- **Objetos que porta**: [Qué tiene consigo]
+## Characters/NPCs
+### [Character Name 1]
+- **Role**: [What role does it play in the story]
+- **Description**: [Appearance and characteristics]
+- **Behavior**: [How it acts, its attitude]
+- **Dialogues**: [What it says or can say]
+- **Objects it carries**: [What it has with it]
 
-### [Nombre del Personaje 2]
-- **Rol**: [Qué papel juega en la historia]
-- **Descripción**: [Apariencia y características]
-- **Comportamiento**: [Cómo actúa, su actitud]
-- **Diálogos**: [Qué dice o puede decir]
-- **Objetos que porta**: [Qué tiene consigo]
+### [Character Name 2]
+- **Role**: [What role does it play in the story]
+- **Description**: [Appearance and characteristics]
+- **Behavior**: [How it acts, its attitude]
+- **Dialogues**: [What it says or can say]
+- **Objects it carries**: [What it has with it]
 
-## Salidas Disponibles
-### [Dirección 1: Norte]
-- **Destino**: [Nombre de la localización a la que lleva]
-- **Descripción del camino**: [Cómo es el trayecto]
-- **Reto/Obstáculo**: 
-  - **Nombre**: [Nombre del reto]
-  - **Descripción**: [Descripción del reto]
-  - **Condición**: [Qué debe hacer el jugador para completarlo]
-  - **Objetos necesarios**: [Lista de objetos requeridos]
-  - **Completado**: [true/false]
-  - **Recompensa**: [Qué gana al completarlo]
+## Available Exits
+### [Direction 1: North]
+- **Destination**: [Name of the location it leads to]
+- **Path Description**: [How the journey is like]
+- **Challenge/Obstacle**: 
+  - **Name**: [Name of the challenge]
+  - **Description**: [Description of the challenge]
+  - **Condition**: [What the player must do to complete it]
+  - **Necessary Objects**: [List of required objects]
+  - **Completed**: [true/false]
+  - **Reward**: [What the player gains upon completion]
 
-### [Dirección 2: Sur]
-- **Destino**: [Nombre de la localización a la que lleva]
-- **Descripción del camino**: [Cómo es el trayecto]
-- **Reto/Obstáculo**: 
-  - **Nombre**: [Nombre del reto]
-  - **Descripción**: [Descripción del reto]
-  - **Condición**: [Qué debe hacer el jugador para completarlo]
-  - **Objetos necesarios**: [Lista de objetos requeridos]
-  - **Completado**: [true/false]
-  - **Recompensa**: [Qué gana al completarlo]
+### [Direction 2: South]
+- **Destination**: [Name of the location it leads to]
+- **Path Description**: [How the journey is like]
+- **Challenge/Obstacle**: 
+  - **Name**: [Name of the challenge]
+  - **Description**: [Description of the challenge]
+  - **Condition**: [What the player must do to complete it]
+  - **Necessary Objects**: [List of required objects]
+  - **Completed**: [true/false]
+  - **Reward**: [What the player gains upon completion]
 
-## Retos Asociados a la Localización
-### [Nombre del Reto 1]
-- **Descripción**: [Qué debe hacer el jugador]
-- **Dificultad**: [Fácil, Normal, Difícil]
-- **Pistas**: [Pistas para resolver el reto]
-- **Solución**: [Cómo se resuelve]
-- **Recompensa**: [Qué obtiene el jugador]
+## Challenges Associated with the Location
+### [Challenge Name 1]
+- **Description**: [What the player must do]
+- **Difficulty**: [Easy, Normal, Difficult]
+- **Hints**: [Hints to solve the challenge]
+- **Solution**: [How it is solved]
+- **Reward**: [What the player obtains]
 
-### [Nombre del Reto 2]
-- **Descripción**: [Qué debe hacer el jugador]
-- **Dificultad**: [Fácil, Normal, Difícil]
-- **Pistas**: [Pistas para resolver el reto]
-- **Solución**: [Cómo se resuelve]
-- **Recompensa**: [Qué obtiene el jugador]
+### [Challenge Name 2]
+- **Description**: [What the player must do]
+- **Difficulty**: [Easy, Normal, Difficult]
+- **Hints**: [Hints to solve the challenge]
+- **Solution**: [How it is solved]
+- **Reward**: [What the player obtains]
 
-## Encuentros Especiales
-- **[Tipo de encuentro]**: [Descripción de qué puede ocurrir]
-- **Probabilidad**: [Si es aleatoria]
-- **Consecuencias**: [Qué ocurre tras el encuentro]
+## Special Encounters
+- **[Type of Encounter]**: [Description of what can happen]
+- **Probability**: [If it is random]
+- **Consequences**: [What happens after the encounter]
 
-## Notas Adicionales
-- [Información especial sobre esta localización]
-- [Secretos o detalles ocultos]
-- [Conexiones con otras localizaciones]
+## Additional Notes
+- [Special information about this location]
+- [Secrets or hidden details]
+- [Connections with other locations]
 
