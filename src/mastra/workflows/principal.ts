@@ -23,6 +23,11 @@ import {
     getWorkingMemory,
     printParsedGameState,
 } from "../memory/memoryUtils";
+import {
+    getNextModel,
+    getCurrentModel,
+    AGENT_CONFIG,
+} from "../config/agentsConfig";
 
 // Define the Zod schema
 const out_filter = z.object({
@@ -47,13 +52,19 @@ const filtrarPregunta = createStep({
     }),
     outputSchema: out_filter,
     execute: async ({ inputData }) => {
+        // Get next model in rotation for this query
+        const currentModel = AGENT_CONFIG.enableModelRotation ? getNextModel() : getCurrentModel();
+
         const filterAgent = mastra.getAgent("filterAgent");
         console.log("[DEBUG] Step Filtrar Query: ", inputData.query);
+        console.log(`[DEBUG] Using model: ${currentModel}`);
+
         const res = await filterAgent.generate(
             [{ role: "user", content: inputData.query }],
             {
                 structuredOutput: {
                     schema: out_filter,
+                    model: currentModel,
                     jsonPromptInjection: true,
                 },
             },
@@ -70,19 +81,15 @@ const describe = createStep({
         answer: z.string(),
     }),
     execute: async ({ inputData }) => {
-        // Placeholder logic for the "describe" step
+        // Get next model in rotation for this query
+        const currentModel = AGENT_CONFIG.enableModelRotation ? getNextModel() : getCurrentModel();
+
         console.log(`[DEBUG] Step Describe Query: ${inputData.query}`);
+        console.log(`[DEBUG] Using model: ${currentModel}`);
 
         // ============= ACCEDER A LA MEMORIA =============
-        // Opción 1: Ver la memoria sin procesar
         const rawMemory = await getWorkingMemory(gameStateThread.id);
         console.log("\n[MEMORY] Raw Working Memory:\n", rawMemory);
-
-        // Opción 2: Ver la memoria formateada (con print bonito)
-        // await printWorkingMemory(gameStateThread.id);
-
-        // Opción 3: Ver la memoria parseada y estructurada
-        // await printParsedGameState(gameStateThread.id);
         // ================================================
 
         const describeAgent = mastra.getAgent("describeAgent");
@@ -93,6 +100,7 @@ const describe = createStep({
                     schema: z.object({
                         answer: z.string()
                     }),
+                    model: currentModel,
                     jsonPromptInjection: true,
                 },
                 memory: {
@@ -114,7 +122,11 @@ const accion = createStep({
         answer: z.string(),
     }),
     execute: async ({ inputData }) => {
+        // Get next model in rotation for this query
+        const currentModel = AGENT_CONFIG.enableModelRotation ? getNextModel() : getCurrentModel();
+
         console.log("[DEBUG] Step Accion Query: ", inputData.query);
+        console.log(`[DEBUG] Using model: ${currentModel}`);
 
         // ============= VER MEMORIA ANTES DE LA ACCIÓN =============
         console.log("\n[MEMORY] Before Action:");
@@ -132,6 +144,7 @@ const accion = createStep({
                         id: z.string().optional(),
                         isCompleted: z.boolean()
                     }),
+                    model: currentModel,
                     jsonPromptInjection: true,
                 },
                 memory: {
@@ -161,7 +174,11 @@ const move = createStep({
         nuevoLugar: z.string().optional(),
     }),
     execute: async ({ inputData, runtimeContext }) => {
+        // Get next model in rotation for this query
+        const currentModel = AGENT_CONFIG.enableModelRotation ? getNextModel() : getCurrentModel();
+
         console.log("[DEBUG] Step Move Query: ", inputData.query);
+        console.log(`[DEBUG] Using model: ${currentModel}`);
 
         // ============= VER MEMORIA ANTES DEL MOVIMIENTO =============
         console.log("\n[MEMORY] Before Movement:");
@@ -178,6 +195,7 @@ const move = createStep({
                         isMove: z.boolean(),
                         nuevoLugar: z.string().optional(),
                     }),
+                    model: currentModel,
                     jsonPromptInjection: true,
                 },
                 memory: {
@@ -186,13 +204,9 @@ const move = createStep({
                 },
             },
         );
-        // console.log("[DEBUG] Step Move Response: ", res);
 
-        // si no esta definida la ponemos en blanco
         const nuevaLocalizacion = res.object.nuevoLugar || "";
 
-        // Si queremos usar la herramienta aqui en vez del Agente
-        // comprueba si se puede mover el jugador
         if (res.object.isMove) {
             const resultadoMove = await moveTool.execute({
                 context: {
@@ -200,7 +214,6 @@ const move = createStep({
                 },
                 runtimeContext,
             });
-            // console.log("[DEBUG] Step Move Result: ", resultadoMove);
 
             // ============= VER MEMORIA DESPUÉS DEL MOVIMIENTO =============
             console.log("\n[MEMORY] After Movement:");

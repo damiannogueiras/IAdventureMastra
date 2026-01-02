@@ -11,13 +11,65 @@
  * - 'anthropic/claude-3-5-sonnet-20241022'
  */
 
+// ============= MODEL ROTATION SYSTEM =============
+// List of models to rotate through on each query
+const AVAILABLE_MODELS = [
+  'google/gemini-2.5-flash',
+  // 'groq/llama-3.1-8b-instant', // no funciona para datos de salida estructurados
+  //'qwen/qwen3-32b',
+    'groq/llama-3.3-70b-versatile',
+  // 'anthropic/claude-3-5-sonnet-20241022',
+    // 'google/gemini-2.5-flash-lite'
+];
+
+// Current index for model rotation lo hacemos random para que no se repitan los mismos modelos
+let modelRotationIndex = Math.floor(Math.random() * AVAILABLE_MODELS.length);
+
+/**
+ * Get the next model in rotation
+ * @returns The next model string
+ */
+export function getNextModel(): string {
+  const model = AVAILABLE_MODELS[modelRotationIndex];
+  modelRotationIndex = (modelRotationIndex + 1) % AVAILABLE_MODELS.length;
+  console.log(`[MODEL ROTATION] Using model: ${model} (${modelRotationIndex}/${AVAILABLE_MODELS.length})`);
+  return model;
+}
+
+/**
+ * Get current model without rotating
+ * @returns Current model string
+ */
+export function getCurrentModel(): string {
+  return AVAILABLE_MODELS[modelRotationIndex];
+}
+
+/**
+ * Reset rotation to first model
+ */
+export function resetModelRotation(): void {
+  modelRotationIndex = 0;
+  console.log(`[MODEL ROTATION] Rotation reset to first model: ${AVAILABLE_MODELS[0]}`);
+}
+
+/**
+ * Get all available models
+ * @returns Array of all available models
+ */
+export function getAvailableModels(): string[] {
+  return AVAILABLE_MODELS;
+}
+
 export const AGENT_CONFIG = {
   // ============= CHANGE THIS TO TEST DIFFERENT MODELS =============
-  model: 'google/gemini-2.5-flash-lite',
+  // Use getNextModel() to rotate, or set a specific model
+  model: getNextModel(),
 
-  // model: 'groq/llama-3.3-70b-versatile',
-  // model: 'openai/gpt-4o',
-  // model: 'anthropic/claude-3-5-sonnet-20241022',
+  // Enable model rotation: set to true to automatically rotate on each query
+  enableModelRotation: true,
+
+  // Available models for rotation
+  availableModels: AVAILABLE_MODELS,
 
   // Token limits for each agent
   tokenLimits: {
@@ -37,6 +89,7 @@ export const AGENT_CONFIG = {
   debug: {
     logRequests: false,
     logResponses: false,
+    logModelRotation: true,
   },
 };
 
