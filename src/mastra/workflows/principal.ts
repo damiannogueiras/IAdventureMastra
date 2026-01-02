@@ -19,6 +19,10 @@ import {z} from "zod";
 import {mastra} from "../index";
 import {moveTool} from "../tools/move-tool";
 import {gameStateMemory} from "../memory/gameState";
+import {
+    getWorkingMemory,
+    printParsedGameState,
+} from "../memory/memoryUtils";
 
 // Define the Zod schema
 const out_filter = z.object({
@@ -26,36 +30,14 @@ const out_filter = z.object({
     query: z.string()
 });
 
-// condiciones iniciales de la memoria
-const gameStateThread = await gameStateMemory.createThread({
-    threadId: "1234",
-    resourceId: "1234",
-    title: "Game State",
-    metadata: {
-        workingMemory: `
-            # Game State
-            ## jugador: viktor
-            ## inventario:
-            - script exploit-2sP: en python
-            ## localizacion actual: exterior cueva
-               El exterior de la cueva es un lugar húmedo y oscuro.
-               Lleno de silvas y rocas cubiertas de musgo, con una atmósfera misteriosa.
-            ### objetos localizacion
-            - manzana: roja y apetitosa
-            ### escenario
-            - Grok: un troll que vigila ferozmente la entrada de la cueva
-            ### salidas
-            - norte: cueva magica
-                -reto: Gronk no deja pasar
-            - sur: bosque encantado
-            ### retos
-            - Gronk no deja pasar
-                - condiciones: darle la manzana a Gronk para que se calme deje pasar
-                - objetos necesarios: manzana
-                - esta completado: false
-`,
-    },
-});
+
+
+// cargamos la memoria de la base de datos
+const gameStateThread = await gameStateMemory.getThreadById({ threadId: "1234" });
+
+if (!gameStateThread) {
+    throw new Error("Game state thread not found with ID '1234'. Please create it first using gameStateMemory.createThread()");
+}
 
 // paso para filtrar la pregunta
 const filtrarPregunta = createStep({
@@ -90,26 +72,37 @@ const describe = createStep({
     execute: async ({ inputData }) => {
         // Placeholder logic for the "describe" step
         console.log(`[DEBUG] Step Describe Query: ${inputData.query}`);
+
+        // ============= ACCEDER A LA MEMORIA =============
+        // Opción 1: Ver la memoria sin procesar
+        const rawMemory = await getWorkingMemory(gameStateThread.id);
+        console.log("\n[MEMORY] Raw Working Memory:\n", rawMemory);
+
+        // Opción 2: Ver la memoria formateada (con print bonito)
+        // await printWorkingMemory(gameStateThread.id);
+
+        // Opción 3: Ver la memoria parseada y estructurada
+        // await printParsedGameState(gameStateThread.id);
+        // ================================================
+
         const describeAgent = mastra.getAgent("describeAgent");
         const res = await describeAgent.generate(
             [{ role: "user", content: inputData.query }],
             {
                 structuredOutput: {
-                schema: z.object({
-                    answer: z.string()
-                }),
-                    jsonPromptInjection
-            :
-                true,
-            },
-                threadId: gameStateThread.id,
-                resourceId: "1234",
+                    schema: z.object({
+                        answer: z.string()
+                    }),
+                    jsonPromptInjection: true,
+                },
+                memory: {
+                    thread: "1234",
+                    resource: "1234"
+                },
             },
         );
 
-        // console.log("[DEBUG] Step Describe: ", gameStateThread.metadata.workinMemory);
         return res.object;
-        // return { answer: `Descripción generada para: ${inputData.query}` };
     },
 });
 
@@ -121,8 +114,14 @@ const accion = createStep({
         answer: z.string(),
     }),
     execute: async ({ inputData }) => {
-        // Placeholder logic for the "reto" step
         console.log("[DEBUG] Step Accion Query: ", inputData.query);
+
+        // ============= VER MEMORIA ANTES DE LA ACCIÓN =============
+        console.log("\n[MEMORY] Before Action:");
+        const memoryBefore = await getWorkingMemory(gameStateThread.id);
+        console.log(memoryBefore);
+        // ===========================================================
+
         const accionAgent = mastra.getAgent("accionAgent");
         const res = await accionAgent.generate(
             [{ role: "user", content: inputData.query }],
@@ -135,11 +134,19 @@ const accion = createStep({
                     }),
                     jsonPromptInjection: true,
                 },
-                threadId: gameStateThread.id,
-                resourceId: "1234",
+                memory: {
+                    thread: "1234",
+                    resource: "1234"
+                },
             },
         );
-        // Devuelve la salida estructurada; soporta `res.result` (nuevo formato) o `res.object` (antiguo)
+
+        // ============= VER MEMORIA DESPUÉS DE LA ACCIÓN =============
+        console.log("\n[MEMORY] After Action:");
+        const memoryAfter = await getWorkingMemory(gameStateThread.id);
+        console.log(memoryAfter);
+        // ===========================================================
+
         return (res as any).result ?? (res as any).object ?? res;
     },
 });
@@ -155,6 +162,12 @@ const move = createStep({
     }),
     execute: async ({ inputData, runtimeContext }) => {
         console.log("[DEBUG] Step Move Query: ", inputData.query);
+
+        // ============= VER MEMORIA ANTES DEL MOVIMIENTO =============
+        console.log("\n[MEMORY] Before Movement:");
+        await printParsedGameState(gameStateThread.id);
+        // ===========================================================
+
         const moveAgent = mastra.getAgent("moveAgent");
         const res = await moveAgent.generate(
             [{ role: "user", content: inputData.query }],
@@ -167,9 +180,13 @@ const move = createStep({
                     }),
                     jsonPromptInjection: true,
                 },
+                memory: {
+                    thread: "1234",
+                    resource: "1234"
+                },
             },
         );
-        console.log("[DEBUG] Step Move Response: ", res);
+        // console.log("[DEBUG] Step Move Response: ", res);
 
         // si no esta definida la ponemos en blanco
         const nuevaLocalizacion = res.object.nuevoLugar || "";
@@ -183,9 +200,14 @@ const move = createStep({
                 },
                 runtimeContext,
             });
-            console.log("[DEBUG] Step Move Result: ", resultadoMove);
+            // console.log("[DEBUG] Step Move Result: ", resultadoMove);
+
+            // ============= VER MEMORIA DESPUÉS DEL MOVIMIENTO =============
+            console.log("\n[MEMORY] After Movement:");
+            await printParsedGameState(gameStateThread.id);
+            // ===========================================================
         }
-        // Devuelve la salida estructurada; soporta `res.result` (nuevo formato) o `res.object` (antiguo)
+
         return (res as any).result ?? (res as any).object ?? res;
     },
 });

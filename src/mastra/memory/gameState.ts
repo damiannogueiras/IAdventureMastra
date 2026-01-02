@@ -34,6 +34,6 @@ export const gameStateMemory = new Memory({
                 - objetos necesarios: [lista de objetos necesarios para completar el reto1]
                 - esta completado: [true/false seun se logre o no el reto1]
 `,
-            },
+            }
         },
     });

@@ -6,6 +6,7 @@ import 'dotenv/config';
 import {describeAgent} from "../agents/describe-agent";
 import {gameStateMemory} from "../memory/gameState";
 import {mastra} from "../index";
+import {printWorkingMemory} from "../memory/memoryUtils";
 
 // carga variables desde `agente86/.env`
 
@@ -86,7 +87,6 @@ async function describe_Agent(query: string) {
     console.log(response.text)
 }
 
-
 async function main_estruct() {
     const query =
         "Describeme la sala de chocolate";
@@ -109,7 +109,6 @@ async function main_estruct() {
     );
     console.log("\n👨‍🍳 Agente Filtro(estruct):", response.object);
 }
-
 
 // definimos el tipo de dato para que no tenga error
 type MyWorkflowOutput = {
@@ -140,15 +139,48 @@ async function test_Workflow(consulta: string) {
 
 }
 
+
+// condiciones iniciales de la memoria
+// creamos una thread con la memoria inicial
+/*const gameStateThread = await gameStateMemory.createThread({
+    threadId: "1234",
+    resourceId: "1234",
+    title: "Game State",
+    metadata: {
+        workingMemory: `
+            # Game State
+            ## jugador: viktor
+            ## inventario:
+              - script exploit-2sP: en python
+            ## localizacion actual: exterior cueva
+               El exterior de la cueva es un lugar húmedo y oscuro. Lleno de silvas y rocas cubiertas de musgo, con una atmósfera misteriosa.
+            ### objetos localizacion
+            - manzana: roja y apetitosa
+            ### escenario
+            - Grok: un troll que vigila ferozmente la entrada de la cueva
+            ### salidas
+              #### norte: cueva magica
+                -reto: Gronk no deja pasar
+              #### sur: bosque encantado
+            ### retos
+            #### Gronk no deja pasar
+                - condiciones: darle la manzana a Gronk para que se calme deje pasar
+                - objetos necesarios: manzana
+                - esta completado: false
+`,
+    },
+});
+*/
+
 // describe_Agent("Describeme la sala")
 // describe_Agent("Como me llamo?")
 // main_estruct();
-// test_Workflow("Describe donde estoy")
-// test_Workflow("Como me llamo?")
-// test_Workflow("Describe las salidas que hay")
-await test_Workflow("coje la manzana")
-//await verMemoria("1234")
-await test_Workflow("Dale la manzana a Grok")
-//await verMemoria("1234")
-await test_Workflow("Que tengo en el inventario?")
-//await verMemoria("1234")
+// await test_Workflow("Describe donde estoy")
+// await test_Workflow("Como me llamo?")
+// await test_Workflow("Describe las salidas que hay")
+// await test_Workflow("coje la manzana")
+// await test_Workflow("busca una manzana")
+await test_Workflow("Quiero ir al norte")
+// await test_Workflow("Dale la manzana a Grok")
+// await printWorkingMemory("1234")
+// await test_Workflow("puedes darme una lista de los objetos que tengo en mi poder, en el inventario?")
